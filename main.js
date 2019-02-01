@@ -1,150 +1,188 @@
-const settingAvailable = document.querySelector(".settingAvailable");
-const paramName = document.querySelector(".paramName");
-const paramDescription = document.querySelector(".paramDescription");
-const previousSetting = document.querySelector(".previousSetting");
-const currentSetting = document.querySelector(".currentSetting");
-const bypassed = document.querySelector(".bypassed");
-const currentReading = document.querySelector(".currentReading");
-const units = document.querySelector(".units");
-const currentStatus = document.querySelector(".currentStatus");
+import { DPM } from "./node_modules/@fnal/dpm/dist/browser.js";
+import { LOOKUP } from "./node_modules/@fnal/lookup/dist/browser.js";
+import { ParamStatus } from "./node_modules/@fnal/param-status/ParamStatus.js";
 
 const dpm = new DPM();
 const lookup = new LOOKUP();
+// const paramStatus = new ParamStatus();
 
-function handleNewReadingData(reading, info) {
-  currentReading.innerText = Number(reading.data).toPrecision(4);
+const body = document.body;
+
+function startParamRequest({ textContent, parentElement }) {
+  lookup
+    .getDeviceByName(textContent)
+    .then(({ di, name, description }) => {
+      parentElement.dataset.di = di;
+
+      parentElement.innerHTML = `<span class="settingAvailable" title="Settings are possible"></span>
+      <span class="paramName" title="Parameter name">${name}</span>
+      <span class="paramDescription" title="Description">${description}</span>
+      <span class="previousSetting" title="Previous setting"></span>
+      <span class="currentSetting" title="Current setting"></span>
+      <span class="bypassed" title="Parameter is bypassed"></span>
+      <span class="currentReading" title="Current reading">DPM_Pend</span>
+      <span class="units" title="Units"></span>
+      <span class="currentStatus" title="Current Status"></span>`;
+
+      // const settingAvailable = document.createElement("span");
+      // settingAvailable.className("settingAvailable");
+      // const paramDescription = document.createElement("span");
+      // paramDescription.className("paramDescription");
+      // const previousSetting = document.createElement("span");
+      // previousSetting.className("previousSetting");
+      // const currentSetting = document.createElement("span");
+      // currentSetting.className("currentSetting");
+      // const bypassed = document.createElement("span");
+      // bypassed.className("bypassed");
+      // const currentReading = document.createElement("span");
+      // currentReading.className("currentReading");
+      // const units = document.createElement("span");
+      // units.className("units");
+      // const currentStatus = document.createElement("span");
+      // currentStatus.className("currentStatus");
+
+      // parentElement.prepend(settingAvailable);
+      // parentElement.appendChild(paramDescription);
+      // parentElement.appendChild(previousSetting);
+      // parentElement.appendChild(currentSetting);
+      // parentElement.appendChild(bypassed);
+      // parentElement.appendChild(currentReading);
+      // parentElement.appendChild(units);
+      // parentElement.appendChild(currentStatus);
+    })
+    .catch(console.error);
 }
 
-function handleNewSettingData(setting, info) {
-  currentSetting.innerText = Number(setting.data).toPrecision(4);
+function determineRequest(element) {
+  console.log(event);
+  const target = event.target;
+  const firstCharacter = textContent.trim().split("")[0];
+
+  if (firstCharacter === "#") {
+    console.info("In the future I'll do some math");
+  } else if (firstCharacter === "!") {
+    return;
+  } else {
+    console.log(target);
+    startParamRequest(target);
+  }
 }
 
-function characterColorDecoder(twoBytes) {
-  const byteString = twoBytes.toString(16).padStart(4, 0);
-  const firstByte = parseInt(byteString.slice(0, 2), 16);
-  const secondByte = parseInt(byteString.slice(2), 16);
-
-  return {
-    color: colorParser(firstByte),
-    character: characterParser(secondByte)
-  };
+function parseInput(inputElement) {
+  const paramRow = inputElement.parentElement;
+  const paramInput = inputElement.textContent;
+  lookup.getDeviceByName(inputElement.textContent).then(lookupInfo => {
+    lookupInfo;
+  });
+  // TODO: Get di
+  // TODO: Crate all param-row fields
+  // TODO: Initiate LOOKUP and DPM requests
 }
 
-function colorParser(colorIndex) {
-  const colors = [
-    "black",
-    "blue",
-    "green",
-    "cyan",
-    "red",
-    "magenta",
-    "yellow",
-    "white"
-  ];
-  return colors[colorIndex];
+function prepPage() {
+  body.innerHTML = `<span class="param-row" id="param-row-0"><input class="param-input" id="param-input-0"></input></span>`;
+  const rowHeight = document.querySelector(".param-row").offsetHeight;
+  const bodyHeight = document.body.offsetHeight;
+  const inputsInBody = Math.floor(bodyHeight / rowHeight);
+
+  Array(inputsInBody - 1)
+    .fill(0)
+    .forEach((_, index) => {
+      const newRow = document.createElement("span");
+      newRow.className = "param-row";
+      newRow.id = `param-row-${index + 1}`;
+      const newInput = document.createElement("input");
+      newInput.className = "param-input";
+      newInput.id = `param-input-${index + 1}`;
+      newInput.addEventListener("keyup", ({ code, target }) => {
+        if (code === "Enter") determineRequest(target);
+      });
+      newRow.appendChild(newInput);
+      body.appendChild(newRow);
+    });
 }
 
-function characterParser(charCode) {
-  return String.fromCharCode(charCode);
-}
+prepPage();
 
-// Object.fromEntries polyfill
-//https://github.com/tc39/proposal-object-from-entries/blob/master/polyfill.js
-function parseStatusChars(chars) {
-  return Object.fromEntries(
-    Object.entries(chars).map(entry => [
-      entry[0],
-      characterColorDecoder(entry[1])
-    ])
-  );
-}
+// const settingAvailable = document.querySelector(".settingAvailable");
+// const paramName = document.querySelector(".paramName");
+// const paramDescription = document.querySelector(".paramDescription");
+// const previousSetting = document.querySelector(".previousSetting");
+// const currentSetting = document.querySelector(".currentSetting");
+// const bypassed = document.querySelector(".bypassed");
+// const currentReading = document.querySelector(".currentReading");
+// const units = document.querySelector(".units");
+// const currentStatus = document.querySelector(".currentStatus");
 
-function coloredCharacter({ character, color }) {
-  return `<span style="color: ${color}">${character}</span>`;
-}
+// const dpm = new DPM();
+// const lookup = new LOOKUP();
+// const paramStatus = new ParamStatus({ container: currentStatus });
 
-function handleNewStatusData(config) {
-  return (status, info) => {
-    let textStatus = "";
+// function handleNewReadingData(reading, info) {
+//   currentReading.innerText = Number(reading.data).toPrecision(4);
+// }
 
-    if (status.on === true) {
-      textStatus += coloredCharacter(config.on);
-    } else if (status.on === false) {
-      textStatus += coloredCharacter(config.off);
-    }
+// function handleNewSettingData(setting, info) {
+//   currentSetting.innerText = Number(setting.data).toPrecision(4);
+// }
 
-    if (status.ready === true) {
-      textStatus += coloredCharacter(config.ready);
-    } else if (status.ready === false) {
-      textStatus += coloredCharacter(config.tripped);
-    }
+// lookup
+//   .deviceByName(paramName.innerText)
+//   .then(properties => {
+//     if (properties.setting) {
+//       dpm.addRequest(`${paramName.innerText}.SETTING`, handleNewSettingData);
+//       settingAvailable.innerText = "-";
+//     }
 
-    if (status.remote === true) {
-      textStatus += coloredCharacter(config.remote);
-    } else if (status.remote === false) {
-      textStatus += coloredCharacter(config.local);
-    }
+//     if (properties.name) {
+//       paramName.innerText = properties.name;
+//     }
 
-    if (status.positive === true) {
-      textStatus += coloredCharacter(config.positive);
-    } else if (status.positive === false) {
-      textStatus += coloredCharacter(config.negative);
-    }
+//     if (properties.di) {
+//       paramName.title = properties.di;
+//     }
 
-    // TODO: Ramp isn't available?
-    if (status.ramp === true) {
-      textStatus += coloredCharacter({ character: "R", color: "green" });
-    } else if (status.ramp === false) {
-      textStatus += coloredCharacter({ character: "D", color: "yellow" });
-    }
+//     if (properties.description) {
+//       paramDescription.innerText = properties.description;
+//     }
 
-    currentStatus.innerHTML = textStatus;
-  };
-}
+//     // TODO: Maybe properties.analogAlarm.flags ?
+//     if (properties.bypassed) {
+//       bypassed.innerText = properties.bypassed;
+//     }
 
-lookup
-  .deviceByName(paramName.innerText)
-  .then(properties => {
-    if (properties.setting) {
-      dpm.addRequest(`${paramName.innerText}.SETTING`, handleNewSettingData);
-      settingAvailable.innerText = "-";
-    }
+//     if (properties.reading) {
+//       currentReading.innerText = "DPM_Pend";
+//       dpm.addRequest(`${paramName.innerText}.READING`, handleNewReadingData);
+//       units.innerText = properties.reading.scaling.common.units;
+//     }
 
-    if (properties.name) {
-      paramName.innerText = properties.name;
-    }
+//     if (properties.status) {
+//       dpm.addRequest(
+//         `${paramName.innerText}.STATUS`,
+//         paramStatus.handleNewData(properties.status)
+//       );
+//     }
 
-    if (properties.di) {
-      paramName.title = properties.di;
-    }
+//     // TODO: Control
 
-    if (properties.description) {
-      paramDescription.innerText = properties.description;
-    }
+//     return properties;
+//   })
+//   .then(console.log)
+//   .catch(console.error);
 
-    // TODO: Maybe properties.analogAlarm.flags ?
-    if (properties.bypassed) {
-      bypassed.innerText = properties.bypassed;
-    }
+// dpm.start();
 
-    if (properties.reading) {
-      currentReading.innerText = "DPM_Pend";
-      dpm.addRequest(`${paramName.innerText}.READING`, handleNewReadingData);
-      units.innerText = properties.reading.scaling.common.units;
-    }
-
-    if (properties.status) {
-      dpm.addRequest(
-        `${paramName.innerText}.STATUS`,
-        handleNewStatusData(parseStatusChars(properties.status.altChars))
-      );
-    }
-
-    // TODO: Control
-
-    return properties;
-  })
-  .then(console.log)
-  .catch(console.error);
-
-dpm.start();
+/**
+    <section>
+      <span class="settingAvailable" title="Settings are possible"></span>
+      <span class="paramName" title="Parameter name">F:MT5EL</span>
+      <span class="paramDescription" title="Description"></span>
+      <span class="previousSetting" title="Previous setting"></span>
+      <span class="currentSetting" title="Current setting"></span>
+      <span class="bypassed" title="Parameter is bypassed"></span>
+      <span class="currentReading" title="Current reading"></span>
+      <span class="units" title="Units"></span>
+      <span class="currentStatus" title="Current Status"></span>
+    </section>
+ */

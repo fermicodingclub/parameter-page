@@ -5,25 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Parameter Page</title>
-    <script src="https://www-ad.fnal.gov/acnet/acnet-1.4.js"></script>
-    <script src="https://www-ad.fnal.gov/acnet/proto_lib-2.0.js"></script>
-    <script src="https://www-ad.fnal.gov/acnet/dpm_protocol-2.0.js"></script>
-    <script src="https://www-ad.fnal.gov/acnet/dpm-2.0.js"></script>
-    <script src="https://www-ad.fnal.gov/acnet/lookup_protocol-1.1.js"></script>
-    <script src="https://www-ad.fnal.gov/acnet/lookup-1.1.js"></script>
+    <style>
+      body {
+        margin: 0;
+        height: 100vh;
+      }
+
+      .param-row {
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+        border: 0;
+      }
+
+      .param-input {
+        width: 100%;
+        border: 0;
+        padding: 0 1px;
+      }
+    </style>
   </head>
   <body>
-    <span>
-      <span class="settingAvailable" title="Settings are possible"></span>
-      <span class="paramName" title="Parameter name">F:MT5EL</span>
-      <span class="paramDescription" title="Description"></span>
-      <span class="previousSetting" title="Previous setting"></span>
-      <span class="currentSetting" title="Current setting"></span>
-      <span class="bypassed" title="Parameter is bypassed"></span>
-      <span class="currentReading" title="Current reading"></span>
-      <span class="units" title="Units"></span>
-      <span class="currentStatus" title="Current Status"></span>
-    </span>
-    <script src="main.js"></script>
+    <script type="module" src="main.js"></script>
   </body>
 </html>
