@@ -144,7 +144,9 @@ lookup
 
     return properties;
   })
+  .then(properties => {
+    dpm.start();
+    return properties;
+  })
   .then(console.log)
   .catch(console.error);
-
-dpm.start();
