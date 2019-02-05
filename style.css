@@ -1,0 +1,72 @@
+:root {
+  font-size: 14pt;
+  font-family: "Courier New", Courier, monospace;
+  color: #efefef;
+  background-color: black;
+}
+
+body {
+  height: 98vh;
+  display: grid;
+  justify-content: center;
+  /* grid-template-columns: 1rem minmax(max-content, auto) minmax(0, auto) auto auto 1rem auto 3rem auto;
+  overflow: hidden; */
+}
+
+/* body > * {
+  padding: 0 0 0 0.3rem;
+} */
+
+.paramPage {
+  display: grid;
+  grid-template-columns: 1rem minmax(max-content, auto) minmax(0, auto) auto auto 1rem auto 3rem auto;
+  overflow: hidden;
+  max-width: 84rem;
+}
+
+.paramPage > * {
+  padding: 0 0 0 0.3rem;
+}
+
+.settingAvailable {
+  text-align: center;
+}
+
+.paramName {
+  color: green;
+}
+
+.paramDescription {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.previousSetting {
+  text-align: right;
+  color: magenta;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.currentSetting {
+  text-align: center;
+}
+
+.bypassed {
+  text-align: right;
+  color: red;
+}
+
+.currentReading {
+  text-align: center;
+}
+
+.units {
+  text-align: right;
+}
+
+.currentStatus {
+  text-align: right;
+}
