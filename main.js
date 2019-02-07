@@ -6,7 +6,7 @@ const dpm = new DPM();
 const lookup = new LOOKUP();
 // const paramStatus = new ParamStatus();
 
-const body = document.body;
+const container = document.querySelector("#paramPage") || document.body;
 
 function startParamRequest({ textContent, parentElement }) {
   lookup
@@ -80,12 +80,12 @@ function parseInput(inputElement) {
 }
 
 function prepPage() {
-  body.innerHTML = `<span class="param-row" id="param-row-0"><input class="param-input" id="param-input-0"></input></span>`;
+  container.innerHTML = `<div class="param-row" id="param-row-0" style="height:max-content"><input class="param-input" id="param-input-0"></input></div>`;
   const rowHeight = document.querySelector(".param-row").offsetHeight;
-  const bodyHeight = document.body.offsetHeight;
-  const inputsInBody = Math.floor(bodyHeight / rowHeight);
+  const containerHeight = container.offsetHeight;
+  const inputsInContainer = Math.floor(containerHeight / rowHeight);
 
-  Array(inputsInBody - 1)
+  Array(inputsInContainer - 1)
     .fill(0)
     .forEach((_, index) => {
       const newRow = document.createElement("span");
@@ -98,7 +98,7 @@ function prepPage() {
         if (code === "Enter") determineRequest(target);
       });
       newRow.appendChild(newInput);
-      body.appendChild(newRow);
+      container.appendChild(newRow);
     });
 }
 
