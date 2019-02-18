@@ -13,27 +13,40 @@ body {
 
 .paramPage {
   display: grid;
-  grid-template-columns: 1ch minmax(max-content, auto) minmax(0, auto) auto auto 1ch auto 4ch 5ch;
+  grid-template-columns:
+    [settingAvailable] 1ch
+    [paramName] minmax(max-content, auto)
+    [paramDescription] minmax(0, auto)
+    [previousSetting] auto
+    [currentSetting] auto
+    [bypassed] 1ch
+    [currentReading] auto
+    [units] 4ch
+    [currentStatus] 5ch;
   overflow: hidden;
   max-width: 84rem;
   gap: 0 1ch;
 }
 
 .settingAvailable {
+  grid-column: settingAvailable;
   text-align: center;
 }
 
 .paramName {
+  grid-column: paramName;
   color: green;
 }
 
 .paramDescription {
+  grid-column: paramDescription;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
 }
 
 .previousSetting {
+  grid-column: previousSetting;
   text-align: right;
   color: magenta;
   text-overflow: ellipsis;
@@ -42,22 +55,27 @@ body {
 }
 
 .currentSetting {
+  grid-column: currentSetting;
   text-align: center;
 }
 
 .bypassed {
+  grid-column: bypassed;
   text-align: right;
   color: red;
 }
 
 .currentReading {
+  grid-column: currentReading;
   text-align: center;
 }
 
 .units {
+  grid-column: units;
   text-align: right;
 }
 
 .currentStatus {
+  grid-column: currentStatus;
   text-align: left;
 }
