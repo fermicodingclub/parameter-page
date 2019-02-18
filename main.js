@@ -8,9 +8,10 @@ const lookup = new LOOKUP();
 
 const container = document.querySelector("#paramPage") || document.body;
 
-function startParamRequest({ textContent, parentElement }) {
+function startParamRequest({ value, parentElement }) {
+  // TODO: Error to row - verify lookup
   lookup
-    .getDeviceByName(textContent)
+    .deviceByName(value)
     .then(({ di, name, description }) => {
       parentElement.dataset.di = di;
 
@@ -53,18 +54,26 @@ function startParamRequest({ textContent, parentElement }) {
     .catch(console.error);
 }
 
+function focusNextInput(input) {
+  input.parentElement.nextElementSibling.firstElementChild.focus();
+}
+
+function doSomeMath(mathString) {
+  return eval(mathString);
+}
+
 function determineRequest(element) {
-  console.log(event);
-  const target = event.target;
-  const firstCharacter = textContent.trim().split("")[0];
+  const inputString = element.value.trim();
+  const firstCharacter = inputString.split("")[0];
 
   if (firstCharacter === "#") {
-    console.info("In the future I'll do some math");
+    console.log(doSomeMath(inputString.slice(1).trim()));
+    focusNextInput(element);
   } else if (firstCharacter === "!") {
-    return;
+    focusNextInput(element);
   } else {
-    console.log(target);
-    startParamRequest(target);
+    console.log(element);
+    startParamRequest(element);
   }
 }
 
@@ -88,7 +97,7 @@ function prepPage() {
   Array(inputsInContainer - 1)
     .fill(0)
     .forEach((_, index) => {
-      const newRow = document.createElement("span");
+      const newRow = document.createElement("div");
       newRow.className = "param-row";
       newRow.id = `param-row-${index + 1}`;
       const newInput = document.createElement("input");

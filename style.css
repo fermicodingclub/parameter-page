@@ -2,13 +2,28 @@
   font-size: 14pt;
   font-family: "Courier New", Courier, monospace;
   color: #efefef;
-  background-color: black;
+  --base-color: black;
+  --contrast: white;
+  background-color: var(--base-color);
 }
 
 body {
   height: 98vh;
   display: grid;
   justify-content: center;
+  grid-template-columns: 1fr;
+  box-sizing: border-box;
+}
+
+.param-row {
+  margin-right: inherit;
+}
+
+.param-input {
+  width: 100%;
+  background-color: var(--base-color);
+  border-color: var(--base-color);
+  color: var(--contrast);
 }
 
 .paramPage {
