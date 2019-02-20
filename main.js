@@ -4,53 +4,134 @@ import { ParamStatus } from "./node_modules/@fnal/param-status/ParamStatus.js";
 
 const dpm = new DPM();
 const lookup = new LOOKUP();
-// const paramStatus = new ParamStatus();
 
 const container = document.querySelector("#paramPage") || document.body;
+
+function processData(di, className) {
+  let initialData;
+  return data => {
+    if (initialData === undefined) initialData = data.data;
+    document.querySelector(
+      `[data-di = "${di}"] > .${className}`
+    ).innerText = Number(data.data).toPrecision(4);
+    if (className === "currentSetting") {
+      document.querySelector(".previousSetting");
+    }
+  };
+}
 
 function startParamRequest({ value, parentElement }) {
   // TODO: Error to row - verify lookup
   lookup
     .deviceByName(value)
-    .then(({ di, name, description }) => {
-      parentElement.dataset.di = di;
+    .then(
+      ({
+        di,
+        name,
+        description,
+        setting,
+        reading,
+        analogAlarm,
+        digitalAlarm,
+        status,
+        control
+      }) => {
+        parentElement.dataset.di = di;
 
-      parentElement.innerHTML = `<span class="settingAvailable" title="Settings are possible"></span>
+        parentElement.innerHTML = `<span class="settingAvailable" title="Settings are possible">${
+          setting ? "-" : ""
+        }</span>
       <span class="paramName" title="Parameter name">${name}</span>
       <span class="paramDescription" title="Description">${description}</span>
       <span class="previousSetting" title="Previous setting"></span>
-      <span class="currentSetting" title="Current setting"></span>
+      <span contenteditable class="currentSetting" title="Current setting"></span>
       <span class="bypassed" title="Parameter is bypassed"></span>
-      <span class="currentReading" title="Current reading">DPM_Pend</span>
-      <span class="units" title="Units"></span>
+      <span class="currentReading" title="Current reading"></span>
+      <span class="units" title="Units">${reading.scaling.common.units}</span>
       <span class="currentStatus" title="Current Status"></span>`;
 
-      // const settingAvailable = document.createElement("span");
-      // settingAvailable.className("settingAvailable");
-      // const paramDescription = document.createElement("span");
-      // paramDescription.className("paramDescription");
-      // const previousSetting = document.createElement("span");
-      // previousSetting.className("previousSetting");
-      // const currentSetting = document.createElement("span");
-      // currentSetting.className("currentSetting");
-      // const bypassed = document.createElement("span");
-      // bypassed.className("bypassed");
-      // const currentReading = document.createElement("span");
-      // currentReading.className("currentReading");
-      // const units = document.createElement("span");
-      // units.className("units");
-      // const currentStatus = document.createElement("span");
-      // currentStatus.className("currentStatus");
+        if (setting) {
+          dpm.addRequest(
+            `0:${di}.SETTING`,
+            (_ => {
+              let initialData;
+              const currentSetting = document.querySelector(
+                `[data-di = "${di}"] > .currentSetting`
+              );
+              const previousSetting = document.querySelector(
+                `[data-di = "${di}"] > .previousSetting`
+              );
 
-      // parentElement.prepend(settingAvailable);
-      // parentElement.appendChild(paramDescription);
-      // parentElement.appendChild(previousSetting);
-      // parentElement.appendChild(currentSetting);
-      // parentElement.appendChild(bypassed);
-      // parentElement.appendChild(currentReading);
-      // parentElement.appendChild(units);
-      // parentElement.appendChild(currentStatus);
-    })
+              return data => {
+                const formattedData = Number(data.data).toPrecision(4);
+
+                if (initialData === undefined) {
+                  initialData = formattedData;
+                } else {
+                  if (initialData !== formattedData) {
+                    previousSetting.innerText = initialData;
+                  } else {
+                    previousSetting.innerText = "";
+                  }
+                }
+
+                currentSetting.innerText = formattedData;
+              };
+            })(),
+            console.error
+          );
+        }
+
+        if (reading) {
+          dpm.addRequest(
+            `0:${di}.READING`,
+            processData(di, "currentReading"),
+            console.error
+          );
+        }
+
+        if (analogAlarm) {
+          const bypassed = document.querySelector(
+            `[data-di = "${di}"] > .bypassed`
+          );
+
+          dpm.addRequest(
+            `0:${di}.ANALOG`,
+            data => {
+              if (!data.alarm_enable) {
+                bypassed.innerText = "*";
+              } else {
+                bypassed.innerText = "";
+              }
+            },
+            console.error
+          );
+        }
+
+        if (digitalAlarm) {
+          //TODO: Display digital alarm status
+        }
+
+        if (status) {
+          const paramStatus = new ParamStatus({
+            container: document.querySelector(
+              `[data-di = "${di}"] .currentStatus`
+            )
+          });
+          dpm.addRequest(
+            `0:${di}.STATUS`,
+            paramStatus.handleNewData(status.altChars),
+            console.error
+          );
+        }
+
+        if (control) {
+          //TODO: Create control menu when status is clicked
+        }
+
+        dpm.start();
+      }
+    )
     .catch(console.error);
 }
 
@@ -72,20 +153,9 @@ function determineRequest(element) {
   } else if (firstCharacter === "!") {
     focusNextInput(element);
   } else {
-    console.log(element);
     startParamRequest(element);
+    focusNextInput(element);
   }
-}
-
-function parseInput(inputElement) {
-  const paramRow = inputElement.parentElement;
-  const paramInput = inputElement.textContent;
-  lookup.getDeviceByName(inputElement.textContent).then(lookupInfo => {
-    lookupInfo;
-  });
-  // TODO: Get di
-  // TODO: Crate all param-row fields
-  // TODO: Initiate LOOKUP and DPM requests
 }
 
 function prepPage() {
