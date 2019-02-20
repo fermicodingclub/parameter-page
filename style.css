@@ -17,6 +17,15 @@ body {
 
 .param-row {
   margin-right: inherit;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  min-width: 0;
+}
+
+.param-row > * {
+  padding-left: 0.3rem;
 }
 
 .param-input {
@@ -26,71 +35,74 @@ body {
   color: var(--contrast);
 }
 
-.paramPage {
-  display: grid;
-  grid-template-columns:
-    [settingAvailable] 1ch
-    [paramName] minmax(max-content, auto)
-    [paramDescription] minmax(0, auto)
-    [previousSetting] auto
-    [currentSetting] auto
-    [bypassed] 1ch
-    [currentReading] auto
-    [units] 4ch
-    [currentStatus] 5ch;
-  overflow: hidden;
-  max-width: 84rem;
-  gap: 0 1ch;
-}
-
 .settingAvailable {
-  grid-column: settingAvailable;
   text-align: center;
+  width: 1ch;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  flex: 0 3 auto;
 }
 
 .paramName {
-  grid-column: paramName;
-  color: green;
+  color: cyan;
+  width: 14ch;
 }
 
 .paramDescription {
-  grid-column: paramDescription;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  flex: 2 5 auto;
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
 }
 
 .previousSetting {
-  grid-column: previousSetting;
   text-align: right;
   color: magenta;
   text-overflow: ellipsis;
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
+  flex: 0 4 auto;
 }
 
 .currentSetting {
-  grid-column: currentSetting;
   text-align: center;
+  color: yellow;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  flex: 0 3 auto;
 }
 
 .bypassed {
-  grid-column: bypassed;
   text-align: right;
   color: red;
+  width: 1ch;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  flex: 0 2 auto;
 }
 
 .currentReading {
-  grid-column: currentReading;
   text-align: center;
+  color: limegreen;
 }
 
 .units {
-  grid-column: units;
   text-align: right;
+  width: 4ch;
 }
 
 .currentStatus {
-  grid-column: currentStatus;
   text-align: left;
+  width: 5ch;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  flex: 0 2 auto;
 }
