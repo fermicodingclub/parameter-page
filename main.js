@@ -160,7 +160,7 @@ function determineRequest(element) {
 
 function prepPage() {
   container.innerHTML = `<div class="param-row" id="param-row-0" style="height:max-content"><input class="param-input" id="param-input-0"></input></div>`;
-  const rowHeight = document.querySelector(".param-row").offsetHeight;
+  const rowHeight = document.querySelector(".param-input").offsetHeight;
   const containerHeight = container.offsetHeight;
   const inputsInContainer = Math.floor(containerHeight / rowHeight);
 
